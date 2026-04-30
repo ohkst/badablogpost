@@ -36,3 +36,11 @@
   - `naver_login.py` 실행 시 백엔드가 꺼져 있어서 발생하는 `JSONDecodeError` 문제 수정.
   - 백엔드 업로드가 실패하더라도, 같은 기기(맥미니)에서 실행 중이면 이미 로컬에 `naver_state.json`이 저장되므로 정상 작동한다는 안내 문구 추가.
 - **상태**: 완료
+
+### [2026-05-01] 외부 포스팅 전용 API 및 API Key 보안 추가
+- **내용**:
+  - `backend/main.py`에 `X-API-Key` 헤더를 검증하는 보안 로직 추가.
+  - 외부 서비스(n8n, Zapier 등) 연동을 위해 JSON Payload를 허용하는 `/api/external/post` 엔드포인트 생성.
+  - `image_url`을 전달받아 서버가 직접 이미지를 다운로드하고 Playwright로 전달하는 기능 구현.
+  - `backend/.env.example`에 `API_KEY` 설정 가이드 추가.
+- **상태**: 완료

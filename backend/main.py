@@ -1,11 +1,24 @@
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile, Form, Depends, HTTPException, Security
+from fastapi.security import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 import asyncio
 import os
 import shutil
+import uuid
 from dotenv import load_dotenv
 import requests
+
+api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+def get_api_key(api_key: str = Security(api_key_header)):
+    expected_api_key = os.getenv("API_KEY")
+    if not expected_api_key:
+        raise HTTPException(status_code=500, detail="Server API_KEY is not configured.")
+    if api_key == expected_api_key:
+        return api_key
+    raise HTTPException(status_code=401, detail="Invalid or missing API Key.")
 
 # .env 파일 로드
 load_dotenv()
@@ -68,6 +81,11 @@ class PostRequest(BaseModel):
     topic: str
     prompt: str
 
+class ExternalPostRequest(BaseModel):
+    topic: str
+    prompt: str
+    image_url: Optional[str] = None
+
 @app.post("/api/post")
 async def create_post(
     topic: str = Form(...),
@@ -94,6 +112,39 @@ async def create_post(
         # (실제 환경에서는 동시성 이슈 관리를 위해 큐 기반 워커나 태스크 큐 권장)
         result = await post_to_naver_blog(topic, generated_text, image_path)
         return {"status": "success", "message": "포스팅 완료", "url": result.get("url")}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
+@app.post("/api/external/post")
+async def create_external_post(
+    request: ExternalPostRequest,
+    api_key: str = Depends(get_api_key)
+):
+    image_path = None
+    if request.image_url:
+        os.makedirs("uploads", exist_ok=True)
+        try:
+            img_response = requests.get(request.image_url, timeout=30)
+            img_response.raise_for_status()
+            filename = request.image_url.split("/")[-1].split("?")[0]
+            if not filename or "." not in filename:
+                filename = f"image_{uuid.uuid4().hex[:8]}.jpg"
+            image_path = f"uploads/{filename}"
+            with open(image_path, "wb") as f:
+                f.write(img_response.content)
+        except Exception as e:
+            return {"status": "error", "message": f"이미지 다운로드 실패: {str(e)}"}
+
+    # 1. vLLM 연동을 통한 본문 생성
+    try:
+        generated_text = await asyncio.to_thread(call_vllm_api, request.topic, request.prompt)
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    
+    # 2. Playwright를 통한 네이버 블로그 포스팅
+    try:
+        result = await post_to_naver_blog(request.topic, generated_text, image_path)
+        return {"status": "success", "message": "외부 포스팅 완료", "url": result.get("url")}
     except Exception as e:
         return {"status": "error", "message": str(e)}
 
