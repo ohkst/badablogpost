@@ -10,10 +10,13 @@
 ## 2. 오픈클로(Openclaw)의 역할 및 목표 (Your Goal)
 현재 `backend/main.py` 파일의 37번 라인 부근에는 오픈클로(vLLM 기반) API를 호출하여 블로그 본문을 생성하는 로직이 임시(Mock)로 작성되어 있습니다. 오픈클로는 이 저장소를 읽고 다음을 수행해야 합니다.
 
-**[수행해야 할 작업]**
-1. **vLLM API 호출 연동**: `backend/main.py` 내부의 텍스트 생성 로직을 실제 구동 중인 vLLM 서버 API (예: OpenAI 호환 API인 `http://localhost:8000/v1/completions` 등)를 호출하도록 변경해야 합니다.
-2. **프롬프트 튜닝 로직 추가**: 사용자가 프론트엔드에서 입력한 `topic`(주제)과 `prompt`(세부 지시사항)를 조합하여, 네이버 블로그 포맷(HTML 기반 혹은 Markdown 형식 등)에 최적화된 결과물을 내놓을 수 있도록 프롬프트 파싱 및 전처리 로직을 오픈클로가 이해하고 작성해야 합니다.
-3. **결과물 반환**: 오픈클로가 생성한 텍스트 결과물(HTML 구조화된 문자열 권장)을 Playwright 에이전트(`posting_agent.py`)로 넘겨주어 정상적으로 네이버 에디터에 삽입될 수 있도록 흐름을 완성하세요.
+**[수행해야 할 작업 및 현재 진행 상태]**
+1. **[완료] vLLM API 호출 연동**: `backend/main.py` 내부에 `requests`를 사용한 vLLM API (OpenAI 호환 Chat Completions API) 연동 및 에러 핸들링 코드가 추가되었습니다.
+2. **[진행 대기] 프롬프트 및 파싱 고도화**: 사용자의 주제와 프롬프트를 바탕으로 네이버 블로그 에디터(SmartEditor ONE)에 완벽하게 호환되는 HTML 요소들로 결과물이 출력되도록 시스템 프롬프트를 최적화해야 합니다.
+3. **[진행 대기 - 핵심] Playwright 자동화 로직 완성**: `backend/posting_agent.py` 파일은 현재 뼈대(Mockup)만 존재합니다. 오픈클로는 이 파일을 수정하여 다음을 구현해야 합니다:
+   - 네이버 로그인 쿠키(NID_AUT, NID_SES)를 활용한 실제 로그인 세션 유지
+   - 네이버 블로그 글쓰기 페이지 진입 및 SmartEditor ONE DOM 셀렉터를 통한 실제 텍스트/이미지 삽입
+   - 네이버 봇 탐지 우회 로직 고도화 및 최종 발행(Publish) 버튼 클릭 로직 완성
 
 ## 3. 핵심 파일 위치 (Key Files to Modify)
 - **`backend/main.py`**
