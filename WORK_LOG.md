@@ -23,3 +23,10 @@
   - `frontend/.env.production` 파일 내 `VITE_API_BASE_URL` 수정.
   - `frontend/.env` 파일을 추가 생성하여 로컬 개발 환경에서도 해당 터널 URL을 바라보도록 설정.
 - **상태**: 완료
+
+### [2026-05-01] 파이썬 실행 환경 세팅 완료
+- **내용**:
+  - `backend` 폴더 내에 가상 환경(`venv`) 생성.
+  - `requirements.txt`에 명시된 모든 패키지(FastAPI, vLLM 연동 모듈, Playwright 등) 설치 완료.
+  - 네이버 블로그 포스팅 자동화를 위한 Playwright Chromium 브라우저 설치 완료.
+- **상태**: 완료
