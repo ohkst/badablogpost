@@ -30,3 +30,9 @@
   - `requirements.txt`에 명시된 모든 패키지(FastAPI, vLLM 연동 모듈, Playwright 등) 설치 완료.
   - 네이버 블로그 포스팅 자동화를 위한 Playwright Chromium 브라우저 설치 완료.
 - **상태**: 완료
+
+### [2026-05-01] 네이버 로그인 스크립트 오류 핸들링 개선
+- **내용**:
+  - `naver_login.py` 실행 시 백엔드가 꺼져 있어서 발생하는 `JSONDecodeError` 문제 수정.
+  - 백엔드 업로드가 실패하더라도, 같은 기기(맥미니)에서 실행 중이면 이미 로컬에 `naver_state.json`이 저장되므로 정상 작동한다는 안내 문구 추가.
+- **상태**: 완료
