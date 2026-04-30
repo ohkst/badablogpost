@@ -4,9 +4,14 @@ from pydantic import BaseModel
 import asyncio
 import os
 import shutil
+import httpx
 
 # 브라우저 제어용 함수 (playwright)
 from posting_agent import post_to_naver_blog
+
+# vLLM 엔드포인트 설정 (현재 연결된 vLLM 서버)
+VLLM_API_URL = "http://localhost:8000/v1/chat/completions"
+VLLM_MODEL = "qwen"
 
 app = FastAPI(title="Naver Blog Auto Posting API")
 
@@ -35,11 +40,13 @@ async def create_post(
         with open(image_path, "wb") as buffer:
             shutil.copyfileobj(image.file, buffer)
 
-    # 1. vLLM 연동을 통한 본문 생성 (여기서는 Mockup 또는 향후 구현)
-    # generated_text = call_vllm_api(topic, prompt)
-    generated_text = f"<h1>{topic}</h1>\n<p>이 내용은 vLLM을 통해 자동 생성된 테스트용 본문입니다.</p>\n<p>프롬프트: {prompt}</p>"
+    # 1. vLLM 연동을 통한 본문 생성
+    try:
+        generated_text = await call_vllm_api(topic, prompt)
+    except Exception as e:
+        return {"status": "error", "message": f"vLLM API 오류: {str(e)}"}
     
-    # 2. Playwright를 통한 네이버 블로그 포스팅
+    # 2. Playwright 를 통한 네이버 블로그 포스팅
     try:
         # 비동기 환경에서 Playwright 실행 
         # (실제 환경에서는 동시성 이슈 관리를 위해 큐 기반 워커나 태스크 큐 권장)
@@ -51,3 +58,31 @@ async def create_post(
 @app.get("/api/health")
 def health_check():
     return {"status": "ok"}
+
+async def call_vllm_api(topic: str, prompt: str) -> str:
+    """
+    vLLM API 를 호출하여 블로그 본문 생성
+    현재 연결된 vLLM 서버 (qwen 모델) 사용
+    """
+    system_prompt = "당신은 전문 블로거입니다. 독자들이 이해하기 쉽고 친근한 말투로 작성하세요."
+    user_message = f"주제: {topic}\n\n요청: {prompt}\n\n위 주제로 네이버 블로그 포스팅을 작성해주세요. 서론, 본론, 결론 구조로 작성하고, HTML 태그를 사용하여 가독성을 높이세요."
+    
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        response = await client.post(
+            VLLM_API_URL,
+            json={
+                "model": VLLM_MODEL,
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_message}
+                ],
+                "temperature": 0.7,
+                "max_tokens": 2000
+            }
+        )
+        
+        if response.status_code != 200:
+            raise Exception(f"vLLM API error: {response.status_code} - {response.text}")
+        
+        result = response.json()
+        return result["choices"][0]["message"]["content"]
