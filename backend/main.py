@@ -100,3 +100,16 @@ async def create_post(
 @app.get("/api/health")
 def health_check():
     return {"status": "ok"}
+
+@app.post("/api/upload_state")
+async def upload_state(file: UploadFile = File(...)):
+    """
+    로컬(노트북)에서 추출한 naver_state.json 파일을 백엔드 서버(맥미니)로 업로드받아 저장합니다.
+    """
+    try:
+        state_path = os.path.join(os.path.dirname(__file__), "naver_state.json")
+        with open(state_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        return {"status": "success", "message": "인증 세션(naver_state.json)이 성공적으로 업로드되었습니다."}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}

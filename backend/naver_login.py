@@ -1,6 +1,9 @@
 import asyncio
 from playwright.async_api import async_playwright
 import os
+import requests
+
+BACKEND_UPLOAD_URL = "https://reasonably-syndicate-maximum-confidentiality.trycloudflare.com/api/upload_state"
 
 async def login_and_save_state():
     print("🚀 네이버 자동 로그인 스크립트를 시작합니다...")
@@ -41,8 +44,24 @@ async def login_and_save_state():
         state_path = os.path.join(os.path.dirname(__file__), "naver_state.json")
         await context.storage_state(path=state_path)
         
-        print(f"🎉 인증 상태(쿠키)가 성공적으로 저장되었습니다: {state_path}")
-        print("이제 백엔드가 이 파일을 읽어 자동으로 포스팅을 진행합니다.")
+        print(f"🎉 인증 상태(쿠키)가 로컬에 성공적으로 저장되었습니다.")
+        print(f"📡 원격 백엔드 서버({BACKEND_UPLOAD_URL})로 전송을 시도합니다...")
+        
+        try:
+            # 동기식 requests 라이브러리 사용 (스크립트 종료 직전이므로 블로킹 무방)
+            with open(state_path, 'rb') as f:
+                files = {'file': ('naver_state.json', f, 'application/json')}
+                res = requests.post(BACKEND_UPLOAD_URL, files=files, timeout=10)
+                res.raise_for_status()
+                data = res.json()
+                if data.get("status") == "success":
+                    print("✅ 원격 백엔드(맥미니)로 쿠키가 완벽하게 동기화되었습니다!")
+                    print("이제 웹 UI에서 바로 포스팅을 진행하시면 됩니다.")
+                else:
+                    print(f"⚠️ 백엔드 전송 실패: {data.get('message')}")
+        except Exception as e:
+            print(f"❌ 백엔드 전송 중 오류 발생: {e}")
+            print("백엔드 서버가 켜져 있는지 확인하세요.")
         
         await browser.close()
 
