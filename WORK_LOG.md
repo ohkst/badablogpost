@@ -44,3 +44,9 @@
   - `image_url`을 전달받아 서버가 직접 이미지를 다운로드하고 Playwright로 전달하는 기능 구현.
   - `backend/.env.example`에 `API_KEY` 설정 가이드 추가.
 - **상태**: 완료
+
+### [2026-05-01] 프론트엔드 연동 CORS 오류 해결
+- **내용**:
+  - 프론트엔드(`https://badablogpost.pages.dev`)에서 백엔드로 요청 시 발생하던 CORS 오류 수정.
+  - `FastAPI`의 `CORSMiddleware` 설정에서 `allow_credentials=True`와 `allow_origins=["*"]` 조합이 충돌하는 문제를 방지하기 위해 프론트엔드 도메인을 명시적으로 지정.
+- **상태**: 완료

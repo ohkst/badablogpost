@@ -71,7 +71,11 @@ app = FastAPI(title="Naver Blog Auto Posting API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # 보안을 위해 향후 프론트엔드 도메인으로 제한 필요
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://badablogpost.pages.dev"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
