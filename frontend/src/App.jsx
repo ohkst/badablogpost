@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Send, UploadCloud, FileText, Settings, Image as ImageIcon, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
+// Cloudflare Tunnel API URL
+const API_BASE_URL = 'https://reasonably-syndicate-maximum-confidentiality.trycloudflare.com';
+
 function App() {
   const [formData, setFormData] = useState({
     topic: '',
@@ -24,7 +27,7 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
-    setMessage('vLLM이 포스팅을 생성하고 네이버에 등록 중입니다...');
+    setMessage('vLLM 이 포스팅을 생성하고 네이버에 등록 중입니다...');
 
     const data = new FormData();
     data.append('topic', formData.topic);
@@ -34,7 +37,7 @@ function App() {
     }
 
     try {
-      const response = await axios.post('/api/post', data, {
+      const response = await axios.post(`${API_BASE_URL}/api/post`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setStatus('success');
@@ -58,6 +61,10 @@ function App() {
             AutoBlog
           </h1>
           <p className="text-slate-400 text-lg">vLLM 기반 네이버 블로그 자동 포스팅 시스템</p>
+          <div className="inline-flex items-center px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+            <CheckCircle className="w-3 h-3 text-emerald-400 mr-1" />
+            <span className="text-xs text-emerald-400">Cloudflare Tunnel 연결됨</span>
+          </div>
         </div>
 
         {/* Main Card */}
@@ -75,7 +82,7 @@ function App() {
                 name="topic"
                 value={formData.topic}
                 onChange={handleChange}
-                placeholder="예: 2026년 인공지능 트렌드 분석"
+                placeholder="예: 2026 년 인공지능 트렌드 분석"
                 className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-slate-500"
                 required
               />
@@ -165,6 +172,16 @@ function App() {
             </div>
           </div>
         )}
+
+        {/* API Info */}
+        <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-4">
+          <h3 className="text-sm font-medium text-slate-300 mb-2">API 연결 정보</h3>
+          <div className="space-y-1 text-xs text-slate-400">
+            <p><span className="text-slate-500">Backend:</span> http://localhost:8000</p>
+            <p><span className="text-slate-500">Tunnel:</span> {API_BASE_URL}</p>
+            <p><span className="text-slate-500">Status:</span> <span className="text-emerald-400">연결됨</span></p>
+          </div>
+        </div>
       </div>
     </div>
   );
