@@ -5,7 +5,9 @@ import { Send, UploadCloud, FileText, Settings, Image as ImageIcon, CheckCircle,
 function App() {
   const [formData, setFormData] = useState({
     topic: '',
-    prompt: ''
+    prompt: '',
+    nid_aut: '',
+    nid_ses: ''
   });
   const [image, setImage] = useState(null);
   const [status, setStatus] = useState('idle'); // idle, loading, success, error
@@ -29,6 +31,8 @@ function App() {
     const data = new FormData();
     data.append('topic', formData.topic);
     data.append('prompt', formData.prompt);
+    data.append('nid_aut', formData.nid_aut);
+    data.append('nid_ses', formData.nid_ses);
     if (image) {
       data.append('image', image);
     }
@@ -63,6 +67,40 @@ function App() {
         {/* Main Card */}
         <div className="bg-slate-800/50 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-8">
+            
+            {/* Naver Cookie Inputs */}
+            <div className="p-5 bg-green-500/5 border border-green-500/20 rounded-2xl space-y-4 mb-4">
+              <div className="flex items-center space-x-2 mb-2">
+                <CheckCircle className="w-5 h-5 text-green-400" />
+                <h3 className="text-md font-semibold text-green-300">고객 인증 정보 (안전한 쿠키 로그인)</h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-300">NID_AUT</label>
+                  <input
+                    type="password"
+                    name="nid_aut"
+                    value={formData.nid_aut}
+                    onChange={handleChange}
+                    placeholder="고객의 NID_AUT 쿠키"
+                    className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-2 text-slate-200 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all placeholder:text-slate-600"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-300">NID_SES</label>
+                  <input
+                    type="password"
+                    name="nid_ses"
+                    value={formData.nid_ses}
+                    onChange={handleChange}
+                    placeholder="고객의 NID_SES 쿠키"
+                    className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-2 text-slate-200 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all placeholder:text-slate-600"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
             
             {/* Topic Input */}
             <div className="space-y-3">

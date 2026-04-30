@@ -32,6 +32,8 @@ class PostRequest(BaseModel):
 async def create_post(
     topic: str = Form(...),
     prompt: str = Form(...),
+    nid_aut: str = Form(...),
+    nid_ses: str = Form(...),
     image: UploadFile = File(None)
 ):
     image_path = None
@@ -49,7 +51,7 @@ async def create_post(
     try:
         # 비동기 환경에서 Playwright 실행 
         # (실제 환경에서는 동시성 이슈 관리를 위해 큐 기반 워커나 태스크 큐 권장)
-        result = await post_to_naver_blog(topic, generated_text, image_path)
+        result = await post_to_naver_blog(topic, generated_text, image_path, nid_aut, nid_ses)
         return {"status": "success", "message": "포스팅 완료", "url": result.get("url")}
     except Exception as e:
         return {"status": "error", "message": str(e)}

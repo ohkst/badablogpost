@@ -1,7 +1,7 @@
 from playwright.async_api import async_playwright
 import os
 
-async def post_to_naver_blog(topic: str, content: str, image_path: str = None):
+async def post_to_naver_blog(topic: str, content: str, image_path: str = None, nid_aut: str = None, nid_ses: str = None):
     """
     네이버 블로그 자동 포스팅 로직 (Playwright 사용)
     """
@@ -15,6 +15,13 @@ async def post_to_naver_blog(topic: str, content: str, image_path: str = None):
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         )
+        
+        # 다중 고객의 쿠키를 주입하여 로그인 세션 활성화
+        if nid_aut and nid_ses:
+            await context.add_cookies([
+                {"name": "NID_AUT", "value": nid_aut, "domain": ".naver.com", "path": "/"},
+                {"name": "NID_SES", "value": nid_ses, "domain": ".naver.com", "path": "/"}
+            ])
         
         page = await context.new_page()
         
