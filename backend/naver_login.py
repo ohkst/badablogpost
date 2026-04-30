@@ -3,7 +3,7 @@ from playwright.async_api import async_playwright
 import os
 import requests
 
-BACKEND_UPLOAD_URL = "https://reasonably-syndicate-maximum-confidentiality.trycloudflare.com/api/upload_state"
+BACKEND_UPLOAD_URL = os.getenv("BACKEND_UPLOAD_URL", "https://badablogpost.your-domain.com/api/upload_state")
 
 async def login_and_save_state():
     print("🚀 네이버 자동 로그인 스크립트를 시작합니다...")
@@ -52,16 +52,24 @@ async def login_and_save_state():
             with open(state_path, 'rb') as f:
                 files = {'file': ('naver_state.json', f, 'application/json')}
                 res = requests.post(BACKEND_UPLOAD_URL, files=files, timeout=10)
-                res.raise_for_status()
-                data = res.json()
-                if data.get("status") == "success":
-                    print("✅ 원격 백엔드(맥미니)로 쿠키가 완벽하게 동기화되었습니다!")
-                    print("이제 웹 UI에서 바로 포스팅을 진행하시면 됩니다.")
+                # res.raise_for_status() 가 HTML을 반환할 수 있으므로 먼저 상태 코드 확인
+                if res.status_code == 200:
+                    try:
+                        data = res.json()
+                        if data.get("status") == "success":
+                            print("✅ 원격 백엔드 서버로 쿠키가 완벽하게 동기화되었습니다!")
+                            print("이제 웹 UI에서 바로 포스팅을 진행하시면 됩니다.")
+                        else:
+                            print(f"⚠️ 백엔드 전송 실패: {data.get('message')}")
+                    except ValueError:
+                        print("⚠️ 백엔드 서버 응답이 올바르지 않습니다. (백엔드 서버가 실행 중이 아닐 수 있습니다.)")
                 else:
-                    print(f"⚠️ 백엔드 전송 실패: {data.get('message')}")
+                    print(f"⚠️ 백엔드 응답 오류 (상태 코드: {res.status_code})")
         except Exception as e:
             print(f"❌ 백엔드 전송 중 오류 발생: {e}")
-            print("백엔드 서버가 켜져 있는지 확인하세요.")
+        
+        print("\n💡 참고: 백엔드 서버와 같은 컴퓨터(현재 이 맥미니)에서 실행하신 경우,")
+        print(f"이미 {state_path} 경로에 인증 파일이 정상 저장되었으므로 위 전송 오류는 무시하셔도 됩니다!")
         
         await browser.close()
 
