@@ -3,7 +3,7 @@ from playwright.async_api import async_playwright
 import os
 import requests
 
-BACKEND_UPLOAD_URL = "https://reasonably-syndicate-maximum-confidentiality.trycloudflare.com/api/upload_state"
+BACKEND_UPLOAD_URL = os.getenv("BACKEND_UPLOAD_URL", "https://badablogpost.your-domain.com/api/upload_state")
 
 async def login_and_save_state():
     print("🚀 네이버 자동 로그인 스크립트를 시작합니다...")
