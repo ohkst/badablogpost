@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+playwright
+python-multipart
+pydantic
+requests
+python-dotenv
