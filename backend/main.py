@@ -4,6 +4,12 @@ from pydantic import BaseModel
 import asyncio
 import os
 import shutil
+from dotenv import load_dotenv
+
+# .env 파일 로드
+load_dotenv()
+
+VLLM_ENDPOINT = os.getenv("VLLM_ENDPOINT", "http://127.0.0.1:8080/v1/completions")
 
 # 브라우저 제어용 함수 (playwright)
 from posting_agent import post_to_naver_blog

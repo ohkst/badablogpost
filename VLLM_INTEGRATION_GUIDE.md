@@ -17,7 +17,9 @@
 
 ## 3. 핵심 파일 위치 (Key Files to Modify)
 - **`backend/main.py`**
-  - `@app.post("/api/post")` 엔드포인트 내의 `generated_text = ...` 부분을 vLLM API 비동기 통신 로직(예: `aiohttp` 또는 `requests` 활용)으로 교체하세요.
+  - 파일 상단에 `VLLM_ENDPOINT` 변수가 `.env` 파일로부터 로드되도록 구성되어 있습니다.
+  - `@app.post("/api/post")` 엔드포인트 내의 `generated_text = ...` 부분을 `VLLM_ENDPOINT`를 활용한 비동기 통신 로직(예: `aiohttp` 또는 `requests` 활용)으로 교체하세요.
+  - **주의**: API 키나 엔드포인트 URL은 절대 하드코딩하지 말고 `VLLM_ENDPOINT` 변수를 사용하세요.
 - **`backend/posting_agent.py`**
   - 생성된 본문이 네이버 SmartEditor ONE의 DOM 구조에 올바르게 삽입될 수 있도록, vLLM이 반환하는 포맷과 네이버 에디터의 `type` 방식이 호환되는지 확인하고 필요시 파싱 로직을 추가하세요.
 
@@ -28,4 +30,4 @@
 
 ## 5. 추가 참고 사항
 - 네이버 봇 탐지 우회를 위해 `posting_agent.py`는 `headless=False` 상태로 개발 및 디버깅하는 것을 권장하며, 로컬 브라우저의 쿠키(세션 상태)를 불러와 네이버 로그인을 패스하도록 구성되어야 합니다.
-- vLLM 서버가 별도의 포트(예: 8080)나 도메인에서 돌고 있다면 `main.py`에 환경변수(`.env`)를 통해 해당 URL을 주입하도록 구성하세요.
+- **보안 설정**: vLLM 서버의 URL 등 민감한 정보는 `backend/.env.example`을 복사하여 `backend/.env`를 만든 후 그 안에 기입하세요. `.env` 파일은 깃허브에 노출되지 않도록 `.gitignore`에 등록되어 있습니다.
