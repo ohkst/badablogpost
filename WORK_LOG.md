@@ -16,3 +16,10 @@
   - 향후 작업 시 한국어 피드백 제공 및 변경 사항을 `WORK_LOG.md`에 지속 기록하기로 합의.
   - 매 작업 완료 시 깃허브에 푸시(Push)하는 원칙 수립.
 - **상태**: 초기화 완료
+
+### [2026-05-01] 백엔드 터널 URL 연동
+- **내용**:
+  - 사용자로부터 전달받은 백엔드 터널 URL(`https://badablogpost.your-domain.com`)을 프론트엔드 환경 변수에 적용.
+  - `frontend/.env.production` 파일 내 `VITE_API_BASE_URL` 수정.
+  - `frontend/.env` 파일을 추가 생성하여 로컬 개발 환경에서도 해당 터널 URL을 바라보도록 설정.
+- **상태**: 완료
