@@ -1,27 +1,25 @@
 from playwright.async_api import async_playwright
 import os
 
-async def post_to_naver_blog(topic: str, content: str, image_path: str = None, nid_aut: str = None, nid_ses: str = None):
+async def post_to_naver_blog(topic: str, content: str, image_path: str = None):
     """
     네이버 블로그 자동 포스팅 로직 (Playwright 사용)
     """
+    state_path = os.path.join(os.path.dirname(__file__), "naver_state.json")
+    if not os.path.exists(state_path):
+        raise Exception("인증 세션(naver_state.json)을 찾을 수 없습니다. 먼저 백엔드 폴더에서 naver_login.py를 실행하여 로그인해주세요.")
+
     async with async_playwright() as p:
         # 브라우저 실행 (headless=True 로컬/운영에서는 권장)
         # 봇 탐지 우회를 위해 args 추가 가능
         browser = await p.chromium.launch(headless=False, args=['--disable-blink-features=AutomationControlled'])
         
         # 쿠키 파일이나 저장된 세션 상태를 불러와 로그인 스킵 처리 (권장)
-        # 컨텍스트 생성 시 storage_state="state.json" 등 지정 가능
+        # naver_login.py에서 생성한 상태 파일 로드
         context = await browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            storage_state=state_path
         )
-        
-        # 다중 고객의 쿠키를 주입하여 로그인 세션 활성화
-        if nid_aut and nid_ses:
-            await context.add_cookies([
-                {"name": "NID_AUT", "value": nid_aut, "domain": ".naver.com", "path": "/"},
-                {"name": "NID_SES", "value": nid_ses, "domain": ".naver.com", "path": "/"}
-            ])
         
         page = await context.new_page()
         
