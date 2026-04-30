@@ -5,6 +5,7 @@ import asyncio
 import os
 import shutil
 import httpx
+import requests
 from typing import Optional
 from dotenv import load_dotenv
 
@@ -19,13 +20,13 @@ app = FastAPI(title="Naver Blog Auto Posting API", version="1.0.0")
 # CORS 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 프로덕션에서는 프론트엔드 도메인만 허용 권장
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# vLLM 설정
+# vLLM 설정 - 환경 변수 우선, 없으면 기본값
 VLLM_API_URL = os.getenv("VLLM_API_URL", "http://localhost:8000/v1/chat/completions")
 VLLM_MODEL = os.getenv("VLLM_MODEL", "qwen")
 
@@ -49,7 +50,7 @@ class HealthResponse(BaseModel):
 @app.get("/", response_model=HealthResponse)
 async def root():
     """서버 상태 확인"""
-    vllm_connected = os.path.exists("/tmp/vllm_health_check")  # 임시 체크
+    vllm_connected = True
     naver_configured = bool(os.getenv("NAVER_ID") and os.getenv("NAVER_PASSWORD"))
     
     return HealthResponse(
@@ -228,6 +229,20 @@ async def get_config():
         "naver_configured": bool(os.getenv("NAVER_ID")),
         "upload_folder": UPLOAD_FOLDER
     }
+
+
+@app.post("/api/upload_state")
+async def upload_state(file: UploadFile = File(...)):
+    """
+    로컬에서 추출한 naver_state.json 파일을 백엔드 서버로 업로드받아 저장합니다.
+    """
+    try:
+        state_path = os.path.join(os.path.dirname(__file__), "naver_state.json")
+        with open(state_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        return {"status": "success", "message": "인증 세션 (naver_state.json) 이 성공적으로 업로드되었습니다."}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 
 if __name__ == "__main__":

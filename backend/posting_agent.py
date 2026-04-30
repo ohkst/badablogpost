@@ -20,7 +20,12 @@ async def post_to_naver_blog(topic: str, content: str, image_path: str = None):
     4. 이미지 업로드 (선택)
     5. 발행
     """
+    state_path = os.path.join(os.path.dirname(__file__), "naver_state.json")
+    if not os.path.exists(state_path):
+        raise Exception("인증 세션(naver_state.json)을 찾을 수 없습니다. 먼저 백엔드 폴더에서 naver_login.py를 실행하여 로그인해주세요.")
+
     async with async_playwright() as p:
+<<<<<<< HEAD
         # 브라우저 실행 (headless=False 로 시각적 확인 가능)
         browser = await p.chromium.launch(
             headless=False,
@@ -29,6 +34,17 @@ async def post_to_naver_blog(topic: str, content: str, image_path: str = None):
                 '--no-sandbox',
                 '--disable-setuid-sandbox'
             ]
+=======
+        # 브라우저 실행 (headless=True 로컬/운영에서는 권장)
+        # 봇 탐지 우회를 위해 args 추가 가능
+        browser = await p.chromium.launch(headless=False, args=['--disable-blink-features=AutomationControlled'])
+        
+        # 쿠키 파일이나 저장된 세션 상태를 불러와 로그인 스킵 처리 (권장)
+        # naver_login.py에서 생성한 상태 파일 로드
+        context = await browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            storage_state=state_path
+>>>>>>> origin/main
         )
         
         # 브라우저 상태 로드 (로그인 유지)
