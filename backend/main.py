@@ -35,15 +35,11 @@ from posting_agent import post_to_naver_blog
 
 app = FastAPI(title="Naver Blog Auto Posting API", version="1.0.0")
 
-# CORS 설정
+# CORS 설정 (개발 환경: 모든 origin 허용)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "https://badablogpost.pages.dev"
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
