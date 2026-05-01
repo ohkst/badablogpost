@@ -50,3 +50,9 @@
   - 프론트엔드(`https://badablogpost.pages.dev`)에서 백엔드로 요청 시 발생하던 CORS 오류 수정.
   - `FastAPI`의 `CORSMiddleware` 설정에서 `allow_credentials=True`와 `allow_origins=["*"]` 조합이 충돌하는 문제를 방지하기 위해 프론트엔드 도메인을 명시적으로 지정.
 - **상태**: 완료
+
+### [2026-05-01] 오픈클로 푸시 코드 검토 및 최적화
+- **내용**:
+  - `backend/posting_agent.py` 내 발생했던 Git Conflict Marker (`<<<<<<< HEAD` 등) 병합 오류 해결. 중복 코드를 정리하고 로컬/운영 브라우저 옵션을 깔끔하게 통합.
+  - `backend/main.py` 내 비동기 함수(`async def call_vllm_api`, `create_external_post`) 내부에서 사용된 동기식 `requests` 라이브러리를 비동기식 `httpx.AsyncClient`로 전면 교체. 이를 통해 외부 API 통신 대기 중 FastAPI 서버 전체가 블로킹(응답 지연)되는 치명적 성능 저하 이슈를 최적화.
+- **상태**: 완료

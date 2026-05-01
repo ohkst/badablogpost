@@ -236,48 +236,48 @@ async def call_vllm_api(topic: str, prompt: str) -> str:
 위 주제로 네이버 블로그 포스팅을 작성해주세요. HTML 태그를 사용하여 가독성을 높이세요."""
 
     try:
-        response = requests.post(
-            VLLM_ENDPOINT,
-            json={
-                "model": VLLM_MODEL,
-                "messages": [
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": user_message}
-                ],
-                "temperature": 0.7,
-                "max_tokens": 2000,
-                "stream": False
-            },
-            timeout=120
-        )
-        
-        if response.status_code != 200:
-            error_detail = response.text
-            try:
-                error_json = response.json()
-                error_detail = error_json.get("error", error_detail)
-            except:
-                pass
-            raise Exception(f"vLLM API error ({response.status_code}): {error_detail}")
-        
-        result = response.json()
-        content = result["choices"][0]["message"]["content"]
-        
-        # HTML 이스케이프 처리 (vLLM 이 마크다운로 출력한 경우 대비)
-        content = content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-        # 하지만 실제 HTML 태그는 복원
-        content = content.replace("&lt;h1&gt;", "<h1>").replace("&lt;/h1&gt;", "</h1>")
-        content = content.replace("&lt;h2&gt;", "<h2>").replace("&lt;/h2&gt;", "</h2>")
-        content = content.replace("&lt;p&gt;", "<p>").replace("&lt;/p&gt;", "</p>")
-        content = content.replace("&lt;ul&gt;", "<ul>").replace("&lt;/ul&gt;", "</ul>")
-        content = content.replace("&lt;li&gt;", "<li>").replace("&lt;/li&gt;", "</li>")
-        content = content.replace("&lt;strong&gt;", "<strong>").replace("&lt;/strong&gt;", "</strong>")
-        content = content.replace("&lt;em&gt;", "<em>").replace("&lt;/em&gt;", "</em>")
-        content = content.replace("&lt;br&gt;", "<br>")
-        
-        return content
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            response = await client.post(
+                VLLM_ENDPOINT,
+                json={
+                    "model": VLLM_MODEL,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_message}
+                    ],
+                    "temperature": 0.7,
+                    "max_tokens": 2000,
+                    "stream": False
+                }
+            )
             
-    except requests.exceptions.RequestError as e:
+            if response.status_code != 200:
+                error_detail = response.text
+                try:
+                    error_json = response.json()
+                    error_detail = error_json.get("error", error_detail)
+                except:
+                    pass
+                raise Exception(f"vLLM API error ({response.status_code}): {error_detail}")
+            
+            result = response.json()
+            content = result["choices"][0]["message"]["content"]
+            
+            # HTML 이스케이프 처리 (vLLM 이 마크다운로 출력한 경우 대비)
+            content = content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            # 하지만 실제 HTML 태그는 복원
+            content = content.replace("&lt;h1&gt;", "<h1>").replace("&lt;/h1&gt;", "</h1>")
+            content = content.replace("&lt;h2&gt;", "<h2>").replace("&lt;/h2&gt;", "</h2>")
+            content = content.replace("&lt;p&gt;", "<p>").replace("&lt;/p&gt;", "</p>")
+            content = content.replace("&lt;ul&gt;", "<ul>").replace("&lt;/ul&gt;", "</ul>")
+            content = content.replace("&lt;li&gt;", "<li>").replace("&lt;/li&gt;", "</li>")
+            content = content.replace("&lt;strong&gt;", "<strong>").replace("&lt;/strong&gt;", "</strong>")
+            content = content.replace("&lt;em&gt;", "<em>").replace("&lt;/em&gt;", "</em>")
+            content = content.replace("&lt;br&gt;", "<br>")
+            
+            return content
+            
+    except httpx.RequestError as e:
         raise Exception(f"vLLM 서버 연결 실패: {str(e)}. vLLM 서버가 실행 중인지 확인해주세요.")
     except Exception as e:
         raise Exception(f"vLLM API 호출 실패: {str(e)}")
@@ -304,14 +304,15 @@ async def create_external_post(
     if request.image_url:
         os.makedirs("uploads", exist_ok=True)
         try:
-            img_response = requests.get(request.image_url, timeout=30)
-            img_response.raise_for_status()
-            filename = request.image_url.split("/")[-1].split("?")[0]
-            if not filename or "." not in filename:
-                filename = f"image_{uuid.uuid4().hex[:8]}.jpg"
-            image_path = f"uploads/{filename}"
-            with open(image_path, "wb") as f:
-                f.write(img_response.content)
+            async with httpx.AsyncClient() as client:
+                img_response = await client.get(request.image_url, timeout=30.0)
+                img_response.raise_for_status()
+                filename = request.image_url.split("/")[-1].split("?")[0]
+                if not filename or "." not in filename:
+                    filename = f"image_{uuid.uuid4().hex[:8]}.jpg"
+                image_path = f"uploads/{filename}"
+                with open(image_path, "wb") as f:
+                    f.write(img_response.content)
         except Exception as e:
             return {"status": "error", "message": f"이미지 다운로드 실패: {str(e)}"}
 
