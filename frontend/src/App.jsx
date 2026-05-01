@@ -44,7 +44,29 @@ function App() {
       setMessage(response.data.message || '포스팅이 성공적으로 완료되었습니다!');
     } catch (error) {
       setStatus('error');
-      setMessage(error.response?.data?.message || '포스팅 중 오류가 발생했습니다.');
+      
+      // 상세 에러 메시지 생성
+      let errorMessage = '포스팅 중 오류가 발생했습니다.';
+      
+      if (error.response) {
+        // 서버에서 에러 응답을 받았을 때
+        const serverMessage = error.response.data?.message;
+        const status = error.response.status;
+        
+        if (serverMessage) {
+          errorMessage = `에러 (Status ${status}): ${serverMessage}`;
+        } else {
+          errorMessage = `에러 (Status ${status}): ${error.response.data?.detail || '알 수 없는 에러'}`;
+        }
+      } else if (error.request) {
+        // 요청은 했지만 응답을 받지 못했을 때
+        errorMessage = '서버와 연결할 수 없습니다. 백엔드 서버 상태를 확인해주세요.';
+      } else {
+        // 요청 설정 중에 문제가 발생했을 때
+        errorMessage = `요청 오류: ${error.message || '알 수 없는 에러'}`;
+      }
+      
+      setMessage(errorMessage);
     }
   };
 

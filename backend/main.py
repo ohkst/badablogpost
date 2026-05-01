@@ -26,8 +26,8 @@ def get_api_key(api_key: str = Security(api_key_header)):
 load_dotenv()
 
 # vLLM 설정
-VLLM_ENDPOINT = os.getenv("VLLM_ENDPOINT", "http://127.0.0.1:8080/v1/chat/completions")
-VLLM_API_URL = os.getenv("VLLM_API_URL", "http://localhost:8000/v1/chat/completions")
+VLLM_API_URL = os.getenv("VLLM_API_URL", "http://api-dgx.freezner.com:18000/v1/chat/completions")
+VLLM_ENDPOINT = os.getenv("VLLM_ENDPOINT", VLLM_API_URL)  # VLLM_ENDPOINT 가 없으면 VLLM_API_URL 사용
 VLLM_MODEL = os.getenv("VLLM_MODEL", "qwen")
 
 # 브라우저 제어용 함수 (playwright)
@@ -257,7 +257,11 @@ async def call_vllm_api(topic: str, prompt: str) -> str:
                 raise Exception(f"vLLM API error ({response.status_code}): {error_detail}")
             
             result = response.json()
-            content = result["choices"][0]["message"]["content"]
+            content = result["choices"][0]["message"].get("content", "")
+            
+            # content 가 None 일 경우 대비
+            if content is None:
+                content = ""
             
             # HTML 이스케이프 처리 (vLLM 이 마크다운로 출력한 경우 대비)
             content = content.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")

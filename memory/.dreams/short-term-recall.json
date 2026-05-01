@@ -1,0 +1,199 @@
+{
+  "version": 1,
+  "updatedAt": "2026-04-29T23:06:20.490Z",
+  "entries": {
+    "memory:memory/2026-04-30.md:1:15": {
+      "key": "memory:memory/2026-04-30.md:1:15",
+      "path": "memory/2026-04-30.md",
+      "startLine": 1,
+      "endLine": 15,
+      "source": "memory",
+      "snippet": "## 2026-04-30 - iNC8 채팅방 명령어 확인 **5:11 AM** - 크론 작업으로 iNC8 채팅방에서 [도비] 명령어 확인 요청 **문제:** message 도구의 poll/send 액션은 메시지 조회 기능이 제한됨 - poll: 투표 생성용 - send: 메시지 전송만 가능 - 메시지 조회/검색 기능 부재 **5:15 AM** - 성태님께 Telegram 으로 확인 요청 메시지 전송 (messageId: 357, chatId: 8683526210) **해결 방안 필요:** 1. 메시지 조회를 위한 별도 도구/기능 추가 필요 2. 또는 iNC8 채팅방에 [도비] 명령어 사용 시 직접 알림 패턴 도입",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.9004115172193279,
+      "maxScore": 0.6335103433559266,
+      "firstRecalledAt": "2026-04-29T20:16:43.305Z",
+      "lastRecalledAt": "2026-04-29T20:19:35.305Z",
+      "queryHashes": [
+        "8a28f96c0e5f",
+        "d3a297b478d2",
+        "f60495b40ccf"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "poll/send",
+        "조회/검색",
+        "도구/기능",
+        "inc8",
+        "채팅방",
+        "명령어",
+        "확인",
+        "크론"
+      ]
+    },
+    "memory:memory/2026-04-30.md:1:19": {
+      "key": "memory:memory/2026-04-30.md:1:19",
+      "path": "memory/2026-04-30.md",
+      "startLine": 1,
+      "endLine": 19,
+      "source": "memory",
+      "snippet": "## 2026-04-30 - iNC8 채팅방 명령어 확인 **5:11 AM** - 크론 작업으로 iNC8 채팅방에서 [도비] 명령어 확인 요청 **문제:** message 도구의 poll/send 액션은 메시지 조회 기능이 제한됨 - poll: 투표 생성용 - send: 메시지 전송만 가능 - 메시지 조회/검색 기능 부재 **5:15 AM** - 성태님께 Telegram 으로 확인 요청 메시지 전송 (messageId: 357, chatId: 8683526210) **5:18 AM** - 두 번째 크론 작업으로 동일한 문제 재확인 - iNC8 채널에서 메시지 조회 기능 부재 상태 유지 - 성태님께 두 번째 확인 요청 메시지 전송 완료 (messageId: 358, chatId: 8683526210) **해결 방안 필요:** 1. 메시지 조회를 위한 별도 도구/기능 추가 필요 2. 또는 iNC8 채팅방에 [도비] 명령어 사용 시 직접 알림 패턴 도입",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.632900243029466,
+      "maxScore": 0.632900243029466,
+      "firstRecalledAt": "2026-04-29T20:21:21.412Z",
+      "lastRecalledAt": "2026-04-29T20:21:21.412Z",
+      "queryHashes": [
+        "cbf86742c9b2"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "poll/send",
+        "조회/검색",
+        "도구/기능",
+        "inc8",
+        "채팅방",
+        "명령어",
+        "확인",
+        "크론"
+      ]
+    },
+    "memory:memory/2026-04-30.md:1:22": {
+      "key": "memory:memory/2026-04-30.md:1:22",
+      "path": "memory/2026-04-30.md",
+      "startLine": 1,
+      "endLine": 22,
+      "source": "memory",
+      "snippet": "## 2026-04-30 - iNC8 채팅방 명령어 확인 **5:11 AM** - 크론 작업으로 iNC8 채팅방에서 [도비] 명령어 확인 요청 **문제:** message 도구의 poll/send 액션은 메시지 조회 기능이 제한됨 - poll: 투표 생성용 - send: 메시지 전송만 가능 - 메시지 조회/검색 기능 부재 **5:15 AM** - 성태님께 Telegram 으로 확인 요청 메시지 전송 (messageId: 357, chatId: 8683526210) **5:18 AM** - 두 번째 크론 작업으로 동일한 문제 재확인 - iNC8 채널에서 메시지 조회 기능 부재 상태 유지 - 성태님께 두 번째 확인 요청 메시지 전송 완료 (messageId: 358, chatId: 8683526210) **해결 방안 필요:** 1. 메시지 조회를 위한 별도 도구/기능 추가 필요 2. 또는 iNC8 채팅방에 [도비] 명령어 사용 시 직접 알림 패턴 도입 3. **5:20 AM** - 세 번째 크론 작업, 동일한 문제 재확인. 성태님께 3 번째 확인 요청 메시지 전송 완료 (messageId: 359) **현재 상태:** iNC8 채팅방 메시지 조회 불가 → 성태님 확인 대기 중",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.6325334197600209,
+      "maxScore": 0.6325334197600209,
+      "firstRecalledAt": "2026-04-29T20:26:45.406Z",
+      "lastRecalledAt": "2026-04-29T20:26:45.406Z",
+      "queryHashes": [
+        "1a42bfb41745"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "poll/send",
+        "조회/검색",
+        "도구/기능",
+        "inc8",
+        "채팅방",
+        "명령어",
+        "확인",
+        "크론"
+      ]
+    },
+    "memory:memory/2026-04-30.md:21:27": {
+      "key": "memory:memory/2026-04-30.md:21:27",
+      "path": "memory/2026-04-30.md",
+      "startLine": 21,
+      "endLine": 27,
+      "source": "memory",
+      "snippet": "**현재 상태:** iNC8 채팅방 메시지 조회 불가 → 성태님 확인 대기 중 **5:25 AM** - 네 번째 크론 작업, 동일한 문제 재확인 - message 도구 메시지 조회 기능 부재 상태 지속 - 성태님께 상세 설명 메시지 전송 완료 (messageId: 361, chatId: 8683526210) - 해결 방안 제시 및 지시 요청",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.6348793580830485,
+      "maxScore": 0.6348793580830485,
+      "firstRecalledAt": "2026-04-29T20:29:39.849Z",
+      "lastRecalledAt": "2026-04-29T20:29:39.849Z",
+      "queryHashes": [
+        "8a28f96c0e5f"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "현재",
+        "상태",
+        "inc8",
+        "채팅방",
+        "메시지",
+        "조회",
+        "불가",
+        "성태님"
+      ]
+    },
+    "memory:memory/2026-04-30.md:1:25": {
+      "key": "memory:memory/2026-04-30.md:1:25",
+      "path": "memory/2026-04-30.md",
+      "startLine": 1,
+      "endLine": 25,
+      "source": "memory",
+      "snippet": "## 2026-04-30 - iNC8 채팅방 명령어 확인 **5:11 AM** - 크론 작업으로 iNC8 채팅방에서 [도비] 명령어 확인 요청 **문제:** message 도구의 poll/send 액션은 메시지 조회 기능이 제한됨 - poll: 투표 생성용 - send: 메시지 전송만 가능 - 메시지 조회/검색 기능 부재 **5:15 AM** - 성태님께 Telegram 으로 확인 요청 메시지 전송 (messageId: 357, chatId: 8683526210) **5:18 AM** - 두 번째 크론 작업으로 동일한 문제 재확인 - iNC8 채널에서 메시지 조회 기능 부재 상태 유지 - 성태님께 두 번째 확인 요청 메시지 전송 완료 (messageId: 358, chatId: 8683526210) **해결 방안 필요:** 1. 메시지 조회를 위한 별도 도구/기능 추가 필요 2. 또는 iNC8 채팅방에 [도비] 명령어 사용 시 직접 알림 패턴 도입 3. **5:20 AM** - 세 번째 크론 작업, 동일한 문제 재확인. 성태님께 3 번째 확인 요청 메시지 전송 완료 (messageId: 359) **현재 상태:** iNC8 채팅방 메시지 조회 불가 → 성태님 확인 대기 중 **5:25 AM** - 네 번째 크론 작업, 동일한 문제 재확인 - message 도구 메시지 조회 기능 부재 상태 지속 - 성태님께 상세 설명 메시",
+      "recallCount": 4,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 2.529418695844372,
+      "maxScore": 0.6323548710982264,
+      "firstRecalledAt": "2026-04-29T20:29:39.849Z",
+      "lastRecalledAt": "2026-04-29T23:06:20.490Z",
+      "queryHashes": [
+        "8a28f96c0e5f",
+        "8ef21750ba81",
+        "28c19445d9ec",
+        "c979f27385fd"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "poll/send",
+        "조회/검색",
+        "도구/기능",
+        "inc8",
+        "채팅방",
+        "명령어",
+        "확인",
+        "크론"
+      ]
+    },
+    "memory:memory/2026-04-30.md:21:32": {
+      "key": "memory:memory/2026-04-30.md:21:32",
+      "path": "memory/2026-04-30.md",
+      "startLine": 21,
+      "endLine": 32,
+      "source": "memory",
+      "snippet": "**현재 상태:** iNC8 채팅방 메시지 조회 불가 → 성태님 확인 대기 중 **5:25 AM** - 네 번째 크론 작업, 동일한 문제 재확인 - message 도구 메시지 조회 기능 부재 상태 지속 - 성태님께 상세 설명 메시지 전송 완료 (messageId: 361, chatId: 8683526210) - 해결 방안 제시 및 지시 요청 **5:28 AM** - 다섯 번째 크론 작업, 동일 문제 재확인 - message 도구에 메시지 조회/poll 기능 부재 지속 - iNC8 채팅방에서 [도비] 명령어 존재 여부 확인할 수 없음 - 성태님의 추가 지시 필요",
+      "recallCount": 3,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 1.9005312024545413,
+      "maxScore": 0.6335105823818588,
+      "firstRecalledAt": "2026-04-29T20:36:53.324Z",
+      "lastRecalledAt": "2026-04-29T23:06:20.490Z",
+      "queryHashes": [
+        "8ef21750ba81",
+        "28c19445d9ec",
+        "c979f27385fd"
+      ],
+      "recallDays": [
+        "2026-04-30"
+      ],
+      "conceptTags": [
+        "조회/poll",
+        "현재",
+        "상태",
+        "inc8",
+        "채팅방",
+        "메시지",
+        "조회",
+        "불가"
+      ]
+    }
+  }
+}
