@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Send, UploadCloud, FileText, Settings, Image as ImageIcon, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 // Cloudflare Tunnel API URL - 환경 변수 우선, 없으면 기본값
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://reasonably-syndicate-maximum-confidentiality.trycloudflare.com';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://blog.ohkst.shop';
 
 function App() {
   const [formData, setFormData] = useState({
