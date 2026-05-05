@@ -6,11 +6,9 @@ import { Send, UploadCloud, FileText, Settings, Image as ImageIcon, CheckCircle,
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://blog.ohkst.shop';
 
 function App() {
-  const [mode, setMode] = useState('direct'); // 'direct' 또는 'ai'
   const [formData, setFormData] = useState({
     topic: '',
-    content: '', // 직접 작성 모드
-    prompt: ''   // AI 생성 모드
+    prompt: ''
   });
   const [image, setImage] = useState(null);
   const [status, setStatus] = useState('idle'); // idle, loading, success, error
@@ -29,35 +27,23 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
-    
-    const endpoint = mode === 'ai' ? '/api/post' : '/api/post/direct';
-    const actionText = mode === 'ai' 
-      ? 'vLLM 이 포스팅을 생성하고 네이버에 등록 중입니다...' 
-      : '네이버 블로그에 등록 중입니다...';
-    
-    setMessage(actionText);
+    setMessage('Dobi 가 AI 로 글을 작성하고 네이버 블로그에 발행 중입니다...');
 
     const data = new FormData();
     data.append('topic', formData.topic);
-    
-    if (mode === 'ai') {
-      data.append('prompt', formData.prompt);
-    } else {
-      data.append('content', formData.content);
-    }
-    
+    data.append('prompt', formData.prompt);
     if (image) {
       data.append('image', image);
     }
 
     try {
-      const response = await axios.post(`${API_BASE_URL}${endpoint}`, data, {
+      const response = await axios.post(`${API_BASE_URL}/api/post`, data, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       setStatus('success');
       setMessage(response.data.message || '포스팅이 성공적으로 완료되었습니다!');
       // 폼 초기화
-      setFormData({ topic: '', content: '', prompt: '' });
+      setFormData({ topic: '', prompt: '' });
       setImage(null);
     } catch (error) {
       setStatus('error');
@@ -99,37 +85,11 @@ function App() {
           <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
             AutoBlog
           </h1>
-          <p className="text-slate-400 text-lg">네이버 블로그 자동 포스팅 시스템</p>
+          <p className="text-slate-400 text-lg">Dobi 의 자동 블로그 포스팅 시스템</p>
           <div className="inline-flex items-center px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
             <CheckCircle className="w-3 h-3 text-emerald-400 mr-1" />
             <span className="text-xs text-emerald-400">Cloudflare Tunnel 연결됨</span>
           </div>
-        </div>
-
-        {/* Mode Toggle */}
-        <div className="flex justify-center space-x-4">
-          <button
-            type="button"
-            onClick={() => setMode('direct')}
-            className={`px-6 py-2 rounded-xl font-medium transition-all ${
-              mode === 'direct'
-                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-            }`}
-          >
-            ✍️ 직접 작성
-          </button>
-          <button
-            type="button"
-            onClick={() => setMode('ai')}
-            className={`px-6 py-2 rounded-xl font-medium transition-all ${
-              mode === 'ai'
-                ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/30'
-                : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-            }`}
-          >
-            🤖 AI 생성
-          </button>
         </div>
 
         {/* Main Card */}
@@ -153,55 +113,31 @@ function App() {
               />
             </div>
 
-            {/* Content Input (Direct Mode) */}
-            {mode === 'direct' && (
-              <div className="space-y-3">
-                <label className="flex items-center space-x-2 text-sm font-medium text-slate-300">
-                  <FileText className="w-4 h-4 text-indigo-400" />
-                  <span>블로그 본문 내용</span>
-                </label>
-                <textarea
-                  name="content"
-                  value={formData.content}
-                  onChange={handleChange}
-                  placeholder="여기에 블로그 본문 내용을 작성하세요. HTML 태그 사용 가능 (&lt;h1&gt;, &lt;h2&gt;, &lt;p&gt;, &lt;ul&gt;, &lt;li&gt;, &lt;strong&gt; 등)"
-                  rows="8"
-                  className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder:text-slate-500 resize-none font-mono text-sm"
-                  required
-                />
-                <p className="text-xs text-slate-500">
-                  💡 팁: HTML 태그를 사용하면 더 깔끔한 포맷팅이 가능합니다.
-                </p>
-              </div>
-            )}
-
-            {/* Prompt Input (AI Mode) */}
-            {mode === 'ai' && (
-              <div className="space-y-3">
-                <label className="flex items-center space-x-2 text-sm font-medium text-slate-300">
-                  <Settings className="w-4 h-4 text-purple-400" />
-                  <span>AI 생성 프롬프트</span>
-                </label>
-                <textarea
-                  name="prompt"
-                  value={formData.prompt}
-                  onChange={handleChange}
-                  placeholder="전문적이고 친근한 블로거 말투로 작성해줘. 서론, 본론, 결론으로 나누고 핵심 키워드를 강조해줘."
-                  rows="4"
-                  className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all placeholder:text-slate-500 resize-none"
-                  required
-                />
-                <p className="text-xs text-slate-500">
-                  💡 AI 가 자동으로 블로그 글을 생성합니다. vLLM 서버가 연결되어 있어야 합니다.
-                </p>
-              </div>
-            )}
+            {/* Prompt Input */}
+            <div className="space-y-3">
+              <label className="flex items-center space-x-2 text-sm font-medium text-slate-300">
+                <Settings className="w-4 h-4 text-purple-400" />
+                <span>AI 생성 프롬프트</span>
+              </label>
+              <textarea
+                name="prompt"
+                value={formData.prompt}
+                onChange={handleChange}
+                placeholder="전문적이고 친근한 블로거 말투로 작성해줘. 서론, 본론, 결론으로 나누고 핵심 키워드를 강조해줘."
+                rows="4"
+                className="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all placeholder:text-slate-500 resize-none"
+                required
+              />
+              <p className="text-xs text-slate-500">
+                💡 Dobi 가 vLLM 을 이용해 자동으로 블로그 글을 작성합니다.
+              </p>
+            </div>
 
             {/* Image Upload */}
             <div className="space-y-3">
               <label className="flex items-center space-x-2 text-sm font-medium text-slate-300">
                 <ImageIcon className="w-4 h-4 text-pink-400" />
-                <span>첨부 이미지</span>
+                <span>첨부 이미지 (선택)</span>
               </label>
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl blur opacity-25 group-hover:opacity-40 transition duration-200"></div>
@@ -233,7 +169,7 @@ function App() {
               {status === 'loading' ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>포스팅 생성 중...</span>
+                  <span>Dobi 가 작성 중...</span>
                 </>
               ) : (
                 <>
@@ -267,19 +203,19 @@ function App() {
 
         {/* Info Card */}
         <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-4">
-          <h3 className="text-sm font-medium text-slate-300 mb-3">💡 사용 방법</h3>
+          <h3 className="text-sm font-medium text-slate-300 mb-3">🤖 Dobi 자동화</h3>
           <div className="space-y-2 text-sm text-slate-400">
             <div className="flex items-start space-x-2">
               <span className="text-indigo-400 font-bold">1.</span>
-              <span><strong className="text-slate-300">직접 작성</strong> 모드: 블로그 내용을 직접 입력하고 즉시 발행</span>
+              <span>주제와 프롬프트를 입력하면 Dobi 가 AI 로 블로그 글 작성</span>
             </div>
             <div className="flex items-start space-x-2">
               <span className="text-purple-400 font-bold">2.</span>
-              <span><strong className="text-slate-300">AI 생성</strong> 모드: 주제와 프롬프트를 입력하면 vLLM 이 자동으로 글 작성</span>
+              <span>vLLM 이 전문적이고 자연스러운 블로그 콘텐츠 생성</span>
             </div>
             <div className="flex items-start space-x-2">
               <span className="text-pink-400 font-bold">3.</span>
-              <span>필요시 이미지를 첨부할 수 있습니다 (선택)</span>
+              <span>네이버 블로그에 자동 발행 (이미지 첨부 가능)</span>
             </div>
           </div>
           <div className="mt-4 pt-3 border-t border-slate-700/50">

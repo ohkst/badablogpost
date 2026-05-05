@@ -39,15 +39,12 @@ async def post_to_naver_blog(topic: str, content: str, image_path: str = None):
             ]
         )
         
-        # 브라우저 상태 로드 (로그인 유지)
+        # 저장된 세션 상태로 브라우저 컨텍스트 생성 (로그인 유지)
         context = await browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            viewport={"width": 1920, "height": 1080}
+            viewport={"width": 1920, "height": 1080},
+            storage_state=state_path  # ✅ 인증 세션 로드
         )
-        
-        # 저장된 세션 상태 로드 (있는 경우)
-        if os.path.exists(BROWSER_STATE_PATH):
-            await context.storage_state(path=BROWSER_STATE_PATH)
         
         page = await context.new_page()
         
@@ -110,28 +107,21 @@ async def post_to_naver_blog(topic: str, content: str, image_path: str = None):
 
 
 async def check_and_login_naver(page):
-    """네이버 로그인 확인 및 로그인"""
-    # 네이버 로그인 페이지로 이동
-    await page.goto("https://nid.naver.com/nidlogin.login")
+    """네이버 로그인 확인 및 로그인 (저장된 세션이 있으므로 생략)"""
+    # storage_state 로 이미 로그인 상태이므로 별도 로그인 불필요
+    print("✅ 저장된 인증 세션으로 로그인 상태 유지")
+    # 네이버 메인 페이지 확인
+    await page.goto("https://www.naver.com/")
     await page.wait_for_timeout(2000)
     
-    # 로그인 폼 확인
-    if await page.is_visible("#id"):
-        print("로그인 필요 - 로그인 진행 중...")
-        
-        # 아이디 입력
-        await page.fill("#id", NAVER_ID)
-        await page.wait_for_timeout(500)
-        
-        # 비밀번호 입력
-        await page.fill("#pw", NAVER_PASSWORD)
-        await page.wait_for_timeout(500)
-        
-        # 로그인 버튼 클릭
-        await page.click("#loginButton")
-        await page.wait_for_timeout(3000)
+    # 로그인 상태 확인 (NID_SES 쿠키 존재 여부)
+    cookies = await page.context.cookies()
+    has_session = any(cookie.get("name") in ["NID_SES", "NID_AUT"] for cookie in cookies)
+    
+    if has_session:
+        print("✅ 네이버 로그인 상태 확인됨")
     else:
-        print("이미 로그인 상태입니다.")
+        print("⚠️ 네이버 로그인 상태가 없습니다. naver_login.py 를 실행해주세요.")
 
 
 async def fill_title(page, topic: str):
