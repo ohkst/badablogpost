@@ -8,7 +8,7 @@ load_dotenv()
 
 NAVER_ID = os.getenv("NAVER_ID", "")
 NAVER_PASSWORD = os.getenv("NAVER_PASSWORD", "")
-BROWSER_STATE_PATH = os.getenv("BROWSER_STATE_PATH", "./browser_state.json")
+BROWSER_STATE_PATH = os.getenv("BROWSER_STATE_PATH", "./naver_state.json")
 
 async def post_to_naver_blog(topic: str, content: str, image_path: str = None):
     """
@@ -21,6 +21,10 @@ async def post_to_naver_blog(topic: str, content: str, image_path: str = None):
     5. 발행
     """
     state_path = os.path.join(os.path.dirname(__file__), "naver_state.json")
+    print(f"📁 인증 세션 파일 경로: {state_path}")
+    print(f"📁 파일 존재 여부: {os.path.exists(state_path)}")
+    if os.path.exists(state_path):
+        print(f"📁 파일 크기: {os.path.getsize(state_path)} bytes")
     if not os.path.exists(state_path):
         raise Exception("인증 세션(naver_state.json)을 찾을 수 없습니다. 먼저 백엔드 폴더에서 naver_login.py를 실행하여 로그인해주세요.")
 
